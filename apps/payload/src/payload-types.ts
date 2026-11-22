@@ -76,6 +76,7 @@ export interface Config {
     pages: Page;
     categories: Category;
     media: Media;
+    tenants: Tenant;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -109,6 +110,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    tenants: TenantsSelect<false> | TenantsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -187,7 +189,7 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
-  roles?: ('admin' | 'customer')[] | null;
+  roles?: ('admin' | 'vendor' | 'customer')[] | null;
   orders?: {
     docs?: (number | Order)[];
     hasNextPage?: boolean;
@@ -203,6 +205,12 @@ export interface User {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
+  tenants?:
+    | {
+        tenant: number | Tenant;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -229,6 +237,7 @@ export interface User {
  */
 export interface Order {
   id: number;
+  tenant?: (number | null) | Tenant;
   items?:
     | {
         product?: (number | null) | Product;
@@ -262,10 +271,34 @@ export interface Order {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants".
+ */
+export interface Tenant {
+  id: number;
+  name: string;
+  /**
+   * Unique URL slug for this vendor/store (e.g., nike, zara, vendor-one)
+   */
+  slug: string;
+  /**
+   * Optional custom domain or subdomain (e.g., vendor1.store.com)
+   */
+  domain?: string | null;
+  status?: ('active' | 'pending' | 'suspended') | null;
+  description?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  currency?: ('INR' | 'USD' | 'EUR') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
 export interface Product {
   id: number;
+  tenant?: (number | null) | Tenant;
   title: string;
   description?: {
     root: {
@@ -326,6 +359,7 @@ export interface Product {
  */
 export interface Media {
   id: number;
+  tenant?: (number | null) | Tenant;
   alt: string;
   caption?: {
     root: {
@@ -437,6 +471,7 @@ export interface CallToActionBlock {
  */
 export interface Page {
   id: number;
+  tenant?: (number | null) | Tenant;
   title: string;
   publishedOn?: string | null;
   hero: {
@@ -599,6 +634,7 @@ export interface ArchiveBlock {
  */
 export interface Category {
   id: number;
+  tenant?: (number | null) | Tenant;
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1070,6 +1106,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'tenants';
+        value: number | Tenant;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: number | Form;
       } | null)
@@ -1161,6 +1201,12 @@ export interface UsersSelect<T extends boolean = true> {
   orders?: T;
   cart?: T;
   addresses?: T;
+  tenants?:
+    | T
+    | {
+        tenant?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1184,6 +1230,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   publishedOn?: T;
   hero?:
@@ -1356,6 +1403,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   generateSlug?: T;
   slug?: T;
@@ -1367,6 +1415,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  tenant?: T;
   alt?: T;
   caption?: T;
   updatedAt?: T;
@@ -1380,6 +1429,22 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants_select".
+ */
+export interface TenantsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  domain?: T;
+  status?: T;
+  description?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1596,6 +1661,7 @@ export interface VariantOptionsSelect<T extends boolean = true> {
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   description?: T;
   gallery?:
@@ -1661,6 +1727,7 @@ export interface CartsSelect<T extends boolean = true> {
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
+  tenant?: T;
   items?:
     | T
     | {

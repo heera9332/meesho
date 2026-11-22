@@ -21,6 +21,7 @@
     "@payloadcms/next": "3.94.1",
     "@payloadcms/plugin-ecommerce": "3.94.1",
     "@payloadcms/plugin-form-builder": "3.94.1",
+    "@payloadcms/plugin-multi-tenant": "3.94.1",
     "@payloadcms/plugin-seo": "3.94.1",
     "@payloadcms/richtext-lexical": "3.94.1",
     "@payloadcms/translations": "3.94.1",

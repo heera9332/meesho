@@ -10,9 +10,14 @@ A production-ready e-commerce monorepo initialized with **Bun**, orchestrated by
 - 🚀 **Turborepo 2**: High-performance pipeline with intelligent caching and parallel task execution.
 - 📦 **Payload CMS 3.x App (`apps/payload`)**:
   - Native Next.js 16 App Router integration.
+  - **Multi-Tenant Plugin** (`@payloadcms/plugin-multi-tenant`):
+    - Separate tenants/vendors (`Tenants` collection).
+    - Multi-tenant data isolation for `Products`, `Orders`, `Media`, and `Pages`.
+    - Tenant selector in the Admin navigation bar for super-admins.
+    - Vendor/Seller role support with tenant-constrained access.
   - **PostgreSQL Database Adapter** (`@payloadcms/db-postgres`).
   - **Lexical Rich Text Editor** (`@payloadcms/richtext-lexical`).
-  - Full E-commerce Schema: `Products`, `Categories`, `Orders`, `Media`, `Users`, and `Pages`.
+  - Full E-commerce Schema: `Tenants`, `Products`, `Categories`, `Orders`, `Media`, `Users`, and `Pages`.
   - Admin Panel accessible at `http://localhost:3001/admin`.
   - Built-in REST & GraphQL APIs (`/api/products`, `/api/graphql`).
 - 🛍️ **Customer Storefront App (`apps/web`)**:

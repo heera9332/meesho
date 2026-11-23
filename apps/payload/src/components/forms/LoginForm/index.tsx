@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/providers/Auth'
+import { SocialLoginButtons } from '@/components/SocialLoginButtons'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getSafeRedirect } from 'payload/shared'
@@ -91,6 +92,8 @@ export const LoginForm: React.FC = () => {
           {isLoading ? 'Processing' : 'Continue'}
         </Button>
       </div>
+
+      <SocialLoginButtons className="mt-8" />
     </form>
   )
 }

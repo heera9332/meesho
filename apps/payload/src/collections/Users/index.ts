@@ -7,6 +7,9 @@ import { adminOrSelf } from '@/access/adminOrSelf'
 import { checkRole } from '@/access/utilities'
 
 import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
+import { userAddressFields } from './fields/addressFields'
+import { userSocialFields } from './fields/socialFields'
+import { oauthEndpoints } from './endpoints/oauth'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -20,12 +23,13 @@ export const Users: CollectionConfig = {
   },
   admin: {
     group: 'Users',
-    defaultColumns: ['name', 'email', 'roles'],
+    defaultColumns: ['name', 'email', 'roles', 'authProvider'],
     useAsTitle: 'name',
   },
   auth: {
     tokenExpiration: 1209600,
   },
+  endpoints: oauthEndpoints,
   fields: [
     {
       name: 'name',
@@ -59,6 +63,8 @@ export const Users: CollectionConfig = {
         },
       ],
     },
+    ...userSocialFields,
+    ...userAddressFields,
     {
       name: 'vendorStore',
       type: 'join',

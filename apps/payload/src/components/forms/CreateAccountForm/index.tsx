@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/providers/Auth'
+import { SocialLoginButtons } from '@/components/SocialLoginButtons'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getSafeRedirect } from 'payload/shared'
@@ -128,6 +129,8 @@ export const CreateAccountForm: React.FC = () => {
       <Button disabled={loading} type="submit" variant="default">
         {loading ? 'Processing' : 'Create Account'}
       </Button>
+
+      <SocialLoginButtons className="mt-6" label="Or register with" />
 
       <div className="prose dark:prose-invert mt-8">
         <p>

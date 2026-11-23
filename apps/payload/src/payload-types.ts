@@ -199,6 +199,95 @@ export interface User {
   name?: string | null;
   roles?: ('admin' | 'vendor' | 'customer')[] | null;
   /**
+   * Profile avatar image URL, synced from Google, GitHub, or custom URL
+   */
+  avatarUrl?: string | null;
+  /**
+   * Method used to authenticate this user
+   */
+  authProvider?: ('email' | 'google' | 'github' | 'multiple') | null;
+  /**
+   * Connected social identity profiles
+   */
+  socialLogins?: {
+    google?: {
+      id?: string | null;
+      email?: string | null;
+      name?: string | null;
+      picture?: string | null;
+      lastLogin?: string | null;
+    };
+    github?: {
+      id?: string | null;
+      username?: string | null;
+      email?: string | null;
+      avatarUrl?: string | null;
+      lastLogin?: string | null;
+    };
+  };
+  /**
+   * Extensible list of third-party OAuth accounts linked to this user
+   */
+  socialAccounts?:
+    | {
+        provider: 'google' | 'github' | 'apple' | 'facebook' | 'other';
+        /**
+         * Unique user ID assigned by the OAuth provider
+         */
+        providerAccountId: string;
+        email?: string | null;
+        name?: string | null;
+        avatarUrl?: string | null;
+        linkedAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Default physical delivery address for orders
+   */
+  shippingAddress?: {
+    firstName?: string | null;
+    lastName?: string | null;
+    company?: string | null;
+    phone?: string | null;
+    addressLine1?: string | null;
+    addressLine2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    /**
+     * ISO 2-letter country code (default: IN)
+     */
+    country?: string | null;
+  };
+  /**
+   * Default billing address for invoices and payments
+   */
+  billingAddress?: {
+    sameAsShipping?: boolean | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    company?: string | null;
+    phone?: string | null;
+    addressLine1?: string | null;
+    addressLine2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    /**
+     * ISO 2-letter country code (default: IN)
+     */
+    country?: string | null;
+  };
+  /**
+   * Link to a saved address in the Address Book
+   */
+  defaultShippingAddress?: (number | null) | Address;
+  /**
+   * Link to a saved address in the Address Book
+   */
+  defaultBillingAddress?: (number | null) | Address;
+  /**
    * Vendor marketplace store associated with this user account.
    */
   vendorStore?: {
@@ -240,6 +329,67 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "addresses".
+ */
+export interface Address {
+  id: number;
+  customer?: (number | null) | User;
+  title?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  company?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
+  country:
+    | 'US'
+    | 'GB'
+    | 'CA'
+    | 'AU'
+    | 'AT'
+    | 'BE'
+    | 'BR'
+    | 'BG'
+    | 'CY'
+    | 'CZ'
+    | 'DK'
+    | 'EE'
+    | 'FI'
+    | 'FR'
+    | 'DE'
+    | 'GR'
+    | 'HK'
+    | 'HU'
+    | 'IN'
+    | 'IE'
+    | 'IT'
+    | 'JP'
+    | 'LV'
+    | 'LT'
+    | 'LU'
+    | 'MY'
+    | 'MT'
+    | 'MX'
+    | 'NL'
+    | 'NZ'
+    | 'NO'
+    | 'PL'
+    | 'PT'
+    | 'RO'
+    | 'SG'
+    | 'SK'
+    | 'SI'
+    | 'ES'
+    | 'SE'
+    | 'CH';
+  phone?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1098,67 +1248,6 @@ export interface Cart {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "addresses".
- */
-export interface Address {
-  id: number;
-  customer?: (number | null) | User;
-  title?: string | null;
-  firstName?: string | null;
-  lastName?: string | null;
-  company?: string | null;
-  addressLine1?: string | null;
-  addressLine2?: string | null;
-  city?: string | null;
-  state?: string | null;
-  postalCode?: string | null;
-  country:
-    | 'US'
-    | 'GB'
-    | 'CA'
-    | 'AU'
-    | 'AT'
-    | 'BE'
-    | 'BR'
-    | 'BG'
-    | 'CY'
-    | 'CZ'
-    | 'DK'
-    | 'EE'
-    | 'FI'
-    | 'FR'
-    | 'DE'
-    | 'GR'
-    | 'HK'
-    | 'HU'
-    | 'IN'
-    | 'IE'
-    | 'IT'
-    | 'JP'
-    | 'LV'
-    | 'LT'
-    | 'LU'
-    | 'MY'
-    | 'MT'
-    | 'MX'
-    | 'NL'
-    | 'NZ'
-    | 'NO'
-    | 'PL'
-    | 'PT'
-    | 'RO'
-    | 'SG'
-    | 'SK'
-    | 'SI'
-    | 'ES'
-    | 'SE'
-    | 'CH';
-  phone?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
@@ -1307,6 +1396,72 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
+  avatarUrl?: T;
+  authProvider?: T;
+  socialLogins?:
+    | T
+    | {
+        google?:
+          | T
+          | {
+              id?: T;
+              email?: T;
+              name?: T;
+              picture?: T;
+              lastLogin?: T;
+            };
+        github?:
+          | T
+          | {
+              id?: T;
+              username?: T;
+              email?: T;
+              avatarUrl?: T;
+              lastLogin?: T;
+            };
+      };
+  socialAccounts?:
+    | T
+    | {
+        provider?: T;
+        providerAccountId?: T;
+        email?: T;
+        name?: T;
+        avatarUrl?: T;
+        linkedAt?: T;
+        id?: T;
+      };
+  shippingAddress?:
+    | T
+    | {
+        firstName?: T;
+        lastName?: T;
+        company?: T;
+        phone?: T;
+        addressLine1?: T;
+        addressLine2?: T;
+        city?: T;
+        state?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  billingAddress?:
+    | T
+    | {
+        sameAsShipping?: T;
+        firstName?: T;
+        lastName?: T;
+        company?: T;
+        phone?: T;
+        addressLine1?: T;
+        addressLine2?: T;
+        city?: T;
+        state?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  defaultShippingAddress?: T;
+  defaultBillingAddress?: T;
   vendorStore?: T;
   orders?: T;
   cart?: T;

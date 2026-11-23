@@ -15,7 +15,8 @@
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
     "generate:importmap": "turbo generate:importmap",
-    "generate:types": "turbo generate:types"
+    "generate:types": "turbo generate:types",
+    "seed:categories": "bun --filter @repo/payload seed:categories"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

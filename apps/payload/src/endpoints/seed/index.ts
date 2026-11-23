@@ -9,6 +9,7 @@ import { imageHatData } from './image-hat'
 import { imageTshirtBlackData } from './image-tshirt-black'
 import { imageTshirtWhiteData } from './image-tshirt-white'
 import { imageHero1Data } from './image-hero-1'
+import { seedCategories } from './categories'
 import { Address, Transaction, VariantOption } from '@/payload-types'
 
 const collections: CollectionSlug[] = [
@@ -26,8 +27,6 @@ const collections: CollectionSlug[] = [
   'addresses',
   'orders',
 ]
-
-const categories = ['Accessories', 'T-Shirts', 'Hats']
 
 const sizeVariantOptions = [
   { label: 'Small', value: 'small' },
@@ -146,9 +145,6 @@ export const seed = async ({
     imageTshirtBlack,
     imageTshirtWhite,
     imageHero,
-    accessoriesCategory,
-    tshirtsCategory,
-    hatsCategory,
   ] = await Promise.all([
     payload.create({
       collection: 'users',
@@ -179,16 +175,17 @@ export const seed = async ({
       data: imageHero1Data,
       file: heroBuffer,
     }),
-    ...categories.map((category) =>
-      payload.create({
-        collection: 'categories',
-        data: {
-          title: category,
-          slug: category,
-        },
-      }),
-    ),
   ])
+
+  const { accessoriesCategory, tshirtsCategory, hatsCategory } = await seedCategories({
+    payload,
+    req,
+    mediaMap: {
+      heroImage: imageHero,
+      hatImage: imageHat,
+      tshirtImage: imageTshirtBlack,
+    },
+  })
 
   payload.logger.info(`— Seeding variant types and options...`)
 

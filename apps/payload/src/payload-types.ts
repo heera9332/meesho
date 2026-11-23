@@ -97,6 +97,10 @@ export interface Config {
       cart: 'carts';
       addresses: 'addresses';
     };
+    categories: {
+      subcategories: 'categories';
+      products: 'products';
+    };
     variantTypes: {
       options: 'variantOptions';
     };
@@ -601,10 +605,68 @@ export interface Category {
   id: number;
   title: string;
   /**
+   * WooCommerce-style category description displayed on archive pages and category banners.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Assign a parent category to create a subcategory / category hierarchy (like WooCommerce).
+   */
+  parent?: (number | null) | Category;
+  /**
+   * WooCommerce category display type: choose whether to show products, subcategories, or both on the category page.
+   */
+  displayType?: ('default' | 'products' | 'subcategories' | 'both') | null;
+  /**
+   * Primary category thumbnail used for category cards, grids, and navigation.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Header banner image displayed on the category archive page.
+   */
+  bannerImage?: (number | null) | Media;
+  /**
+   * Integer order for custom category sorting (lower values display first).
+   */
+  menuOrder?: number | null;
+  /**
+   * Feature this category in top navigation, home page grids, or promotion sections.
+   */
+  isFeatured?: boolean | null;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
+  /**
+   * Subcategories nested under this category.
+   */
+  subcategories?: {
+    docs?: (number | Category)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Products assigned to this category.
+   */
+  products?: {
+    docs?: (number | Product)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1357,8 +1419,17 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  description?: T;
+  parent?: T;
+  displayType?: T;
+  image?: T;
+  bannerImage?: T;
+  menuOrder?: T;
+  isFeatured?: T;
   generateSlug?: T;
   slug?: T;
+  subcategories?: T;
+  products?: T;
   updatedAt?: T;
   createdAt?: T;
 }

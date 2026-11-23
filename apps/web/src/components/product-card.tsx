@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Product } from "@/types/ecommerce"
 import { useCart } from "@/lib/cart-context"
+import { getProductImage, getProductPrice } from "@/lib/payload"
 import { Star, ShoppingBag, Check } from "lucide-react"
 import { useState } from "react"
 
@@ -22,31 +23,19 @@ export function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setIsAdded(false), 1500)
   }
 
-  const discountPercent = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : null
+  const price = getProductPrice(product)
+  const imageUrl = getProductImage(product)
 
   return (
     <div className="group relative flex flex-col rounded-xl border bg-card overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200">
       {/* Product Image */}
       <Link href={`/products/${product.slug}`} className="relative aspect-square w-full overflow-hidden bg-secondary/30">
         <img
-          src={product.images[0]}
+          src={imageUrl}
           alt={product.title}
           className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
-
-        {/* Badge */}
-        {discountPercent ? (
-          <span className="absolute top-2 left-2 rounded-md bg-emerald-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-xs">
-            {discountPercent}% OFF
-          </span>
-        ) : product.badge ? (
-          <span className="absolute top-2 left-2 rounded-md bg-pink-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-xs">
-            {product.badge}
-          </span>
-        ) : null}
       </Link>
 
       {/* Product Details */}
@@ -61,11 +50,11 @@ export function ProductCard({ product }: ProductCardProps) {
           {/* Rating */}
           <div className="flex items-center gap-1.5 mt-1.5">
             <span className="inline-flex items-center gap-1 rounded bg-emerald-700 px-1.5 py-0.5 text-[11px] font-bold text-white">
-              <span>{product.rating ?? 4.7}</span>
+              <span>4.7</span>
               <Star className="h-2.5 w-2.5 fill-current" />
             </span>
             <span className="text-[11px] text-muted-foreground">
-              ({product.reviewsCount ?? 150})
+              (150)
             </span>
           </div>
         </div>
@@ -74,10 +63,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="mt-4 pt-3 border-t flex items-center justify-between">
           <div className="flex flex-col">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-bold text-foreground">₹{product.price}</span>
-              {product.originalPrice && (
-                <span className="text-xs text-muted-foreground line-through">₹{product.originalPrice}</span>
-              )}
+              <span className="text-base font-bold text-foreground">₹{price}</span>
             </div>
             <span className="text-[10px] text-emerald-600 font-semibold">Free Delivery</span>
           </div>

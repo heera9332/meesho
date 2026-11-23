@@ -1,44 +1,12 @@
-export interface Product {
-  id: string
-  title: string
-  slug: string
-  description?: string
-  price: number
-  originalPrice?: number
-  images: string[]
-  category: string
-  rating?: number
-  reviewsCount?: number
-  inStock?: boolean
-  badge?: string
-}
+import 'payload'
+import type { Cart, Product } from '@repo/payload/types'
 
-export interface Category {
-  id: string
-  title: string
-  slug: string
-  image: string
-  itemCount?: number
-}
+// Re-export all auto-generated collection & global types directly from Payload
+export type * from '@repo/payload/types'
 
-export interface CartItem {
+// Storefront CartItem derived directly from Payload's Cart items
+export type CartItem = NonNullable<Cart['items']>[number] & {
   product: Product
-  quantity: number
   selectedSize?: string
   selectedColor?: string
-}
-
-export interface Order {
-  id: string
-  items: CartItem[]
-  total: number
-  status: 'pending' | 'processing' | 'shipped' | 'delivered'
-  createdAt: string
-  shippingAddress: {
-    fullName: string
-    address: string
-    city: string
-    postalCode: string
-    phone: string
-  }
 }

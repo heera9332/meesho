@@ -2,12 +2,13 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { CartItem, Product } from "@/types/ecommerce"
+import { getProductPrice } from "./payload"
 
 interface CartContextType {
   items: CartItem[]
   addItem: (product: Product, quantity?: number, size?: string) => void
-  removeItem: (productId: string) => void
-  updateQuantity: (productId: string, quantity: number) => void
+  removeItem: (productId: number | string) => void
+  updateQuantity: (productId: number | string, quantity: number) => void
   clearCart: () => void
   totalCount: number
   subtotal: number
@@ -61,11 +62,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsSheetOpen(true)
   }
 
-  const removeItem = (productId: string) => {
+  const removeItem = (productId: number | string) => {
     setItems((prev) => prev.filter((item) => item.product.id !== productId))
   }
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (productId: number | string, quantity: number) => {
     if (quantity <= 0) {
       removeItem(productId)
       return
@@ -82,7 +83,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }
 
   const totalCount = items.reduce((acc, item) => acc + item.quantity, 0)
-  const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+  const subtotal = items.reduce((acc, item) => acc + getProductPrice(item.product) * item.quantity, 0)
 
   return (
     <CartContext.Provider

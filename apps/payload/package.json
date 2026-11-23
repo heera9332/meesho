@@ -4,6 +4,9 @@
   "description": "Payload CMS application for Meesho Ecommerce",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    "./types": "./src/payload-types.ts"
+  },
   "scripts": {
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 3001",

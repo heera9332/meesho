@@ -11,7 +11,7 @@ import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: ({ req: { user } }) => checkRole(['admin', 'vendor'], user),
+    admin: ({ req: { user } }) => checkRole(['admin'], user),
     create: publicAccess,
     delete: adminOnly,
     read: adminOrSelf,
@@ -48,10 +48,6 @@ export const Users: CollectionConfig = {
         {
           label: 'admin',
           value: 'admin',
-        },
-        {
-          label: 'vendor',
-          value: 'vendor',
         },
         {
           label: 'customer',

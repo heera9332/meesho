@@ -20,7 +20,6 @@
         "@payloadcms/next": "3.94.1",
         "@payloadcms/plugin-ecommerce": "3.94.1",
         "@payloadcms/plugin-form-builder": "3.94.1",
-        "@payloadcms/plugin-multi-tenant": "3.94.1",
         "@payloadcms/plugin-seo": "3.94.1",
         "@payloadcms/richtext-lexical": "3.94.1",
         "@payloadcms/translations": "3.94.1",
@@ -493,8 +492,6 @@
     "@payloadcms/plugin-ecommerce": ["@payloadcms/plugin-ecommerce@3.94.1", "", { "dependencies": { "@payloadcms/translations": "3.94.1", "@payloadcms/ui": "3.94.1", "qs-esm": "8.0.1" }, "peerDependencies": { "payload": "3.94.1", "react": "~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1", "react-dom": "~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1" } }, "sha512-1OsSUg1baqPP1BbHWA3mIYi872sYUYnXM7KQUCY98cNWdPZ03+W4XAmmci/ojr73/KB/ndx4y5b3Am3DnOC5Xg=="],
 
     "@payloadcms/plugin-form-builder": ["@payloadcms/plugin-form-builder@3.94.1", "", { "dependencies": { "@payloadcms/translations": "3.94.1", "@payloadcms/ui": "3.94.1", "escape-html": "^1.0.3" }, "peerDependencies": { "payload": "3.94.1", "react": "~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1", "react-dom": "~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1" } }, "sha512-lsvOh/JAnHc5wDncWrBukH6TqSBU6/oIO0fu26fcdHvyQkT2SupDPuRTr44JBju3xowxElKM7U0OvMGqTDINXw=="],
-
-    "@payloadcms/plugin-multi-tenant": ["@payloadcms/plugin-multi-tenant@3.94.1", "", { "peerDependencies": { "@payloadcms/ui": "3.94.1", "payload": "3.94.1" } }, "sha512-+PgYy6WdDrIW7qtZJGjMvyzO68wdBw50djasaXeLGU2cExYsQEJz3zW3ISHU3V9LSSHv9fFnozFfevEcjUPbpQ=="],
 
     "@payloadcms/plugin-seo": ["@payloadcms/plugin-seo@3.94.1", "", { "dependencies": { "@payloadcms/translations": "3.94.1", "@payloadcms/ui": "3.94.1" }, "peerDependencies": { "payload": "3.94.1", "react": "~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1", "react-dom": "~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1" } }, "sha512-ltolEXHKHRlAwxQSNzlX4Q3CgIR0cFWHQ77Jl0ZG+K0Cp7SRFZj/Gv97mBUrDwuNXmxryh/FvcFZFOFmZW0lOw=="],
 

@@ -4,7 +4,6 @@ import { Plugin } from 'payload'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
-import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 
 import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
 
@@ -16,7 +15,6 @@ import { adminOnlyFieldAccess } from '@/access/adminOnlyFieldAccess'
 import { customerOnlyFieldAccess } from '@/access/customerOnlyFieldAccess'
 import { isAdmin } from '@/access/isAdmin'
 import { isDocumentOwner } from '@/access/isDocumentOwner'
-import { checkRole } from '@/access/utilities'
 
 const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Ecommerce Template` : 'Payload Ecommerce Template'
@@ -129,26 +127,5 @@ export const plugins: Plugin[] = [
     products: {
       productsCollectionOverride: ProductsCollection,
     },
-  }),
-  multiTenantPlugin({
-    collections: {
-      products: {
-        useTenantAccess: true,
-      },
-      orders: {
-        useTenantAccess: true,
-      },
-      categories: {
-        useTenantAccess: false,
-      },
-      media: {
-        useTenantAccess: true,
-      },
-      pages: {
-        useTenantAccess: true,
-      },
-    },
-    tenantsSlug: 'tenants',
-    userHasAccessToAllTenants: (user: any) => checkRole(['admin'], user),
   }),
 ]

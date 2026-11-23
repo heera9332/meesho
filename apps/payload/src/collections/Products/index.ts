@@ -20,11 +20,44 @@ import {
 } from '@payloadcms/richtext-lexical'
 import { DefaultDocumentIDType, Where } from 'payload'
 
+import { checkRole } from '@/access/utilities'
+import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
+import { isVendorOrAdmin } from '@/access/isVendorOrAdmin'
+
 export const ProductsCollection: CollectionOverride = ({ defaultCollection }) => ({
   ...defaultCollection,
+  access: {
+    ...defaultCollection?.access,
+    create: isVendorOrAdmin,
+    read: adminOrPublishedStatus,
+    update: ({ req: { user } }) => {
+      if (!user) return false
+      if (checkRole(['admin'], user)) return true
+      if (checkRole(['vendor'], user)) {
+        return {
+          'vendor.owner': {
+            equals: user.id,
+          },
+        }
+      }
+      return false
+    },
+    delete: ({ req: { user } }) => {
+      if (!user) return false
+      if (checkRole(['admin'], user)) return true
+      if (checkRole(['vendor'], user)) {
+        return {
+          'vendor.owner': {
+            equals: user.id,
+          },
+        }
+      }
+      return false
+    },
+  },
   admin: {
     ...defaultCollection?.admin,
-    defaultColumns: ['title', 'enableVariants', '_status', 'variants.variants'],
+    defaultColumns: ['title', 'vendor', 'enableVariants', '_status', 'priceInUSD'],
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
@@ -206,6 +239,42 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
       },
       hasMany: true,
       relationTo: 'categories',
+    },
+    {
+      name: 'vendor',
+      type: 'relationship',
+      relationTo: 'vendors',
+      hasMany: false,
+      admin: {
+        position: 'sidebar',
+        description: 'The vendor store offering this product.',
+      },
+      hooks: {
+        beforeChange: [
+          async ({ req, value, operation }) => {
+            // If admin explicitly assigned vendor, keep it
+            if (req.user && checkRole(['admin'], req.user) && value) {
+              return value
+            }
+            // If vendor user creates a product, auto-assign their own vendor store
+            if (operation === 'create' && req.user && checkRole(['vendor'], req.user)) {
+              const vendorStore = await req.payload.find({
+                collection: 'vendors',
+                where: {
+                  owner: {
+                    equals: req.user.id,
+                  },
+                },
+                limit: 1,
+              })
+              if (vendorStore.docs.length > 0) {
+                return vendorStore.docs[0].id
+              }
+            }
+            return value
+          },
+        ],
+      },
     },
     slugField(),
   ],

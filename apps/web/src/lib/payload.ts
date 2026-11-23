@@ -317,6 +317,16 @@ export function getCategoryImage(category: Category): string {
   return "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"
 }
 
+export function getProductVendor(product: Product): { name: string; isVerified: boolean } | null {
+  if (product.vendor && typeof product.vendor === "object" && product.vendor.name) {
+    return {
+      name: product.vendor.name,
+      isVerified: Boolean(product.vendor.isVerified),
+    }
+  }
+  return null
+}
+
 export async function getProducts(categorySlug?: string): Promise<Product[]> {
   try {
     const url = new URL(`${PAYLOAD_URL}/api/products`)

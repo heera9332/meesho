@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { Product } from "@/types/ecommerce"
 import { useCart } from "@/lib/cart-context"
-import { getProductImage, getProductPrice } from "@/lib/payload"
-import { Star, ShoppingBag, Check } from "lucide-react"
+import { getProductImage, getProductPrice, getProductVendor } from "@/lib/payload"
+import { Star, ShoppingBag, Check, BadgeCheck } from "lucide-react"
 import { useState } from "react"
 
 interface ProductCardProps {
@@ -25,6 +25,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const price = getProductPrice(product)
   const imageUrl = getProductImage(product)
+  const vendor = getProductVendor(product)
 
   return (
     <div className="group relative flex flex-col rounded-xl border bg-card overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200">
@@ -46,6 +47,13 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.title}
             </h3>
           </Link>
+
+          {vendor && (
+            <div className="flex items-center gap-1 mt-1 text-[11px] text-muted-foreground">
+              <span className="truncate max-w-[140px]">{vendor.name}</span>
+              {vendor.isVerified && <BadgeCheck className="h-3 w-3 text-pink-600 shrink-0" />}
+            </div>
+          )}
 
           {/* Rating */}
           <div className="flex items-center gap-1.5 mt-1.5">

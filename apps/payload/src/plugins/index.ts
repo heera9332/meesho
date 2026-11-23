@@ -1,6 +1,6 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { Plugin } from 'payload'
+import type { Plugin, Where } from 'payload'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
@@ -15,6 +15,7 @@ import { adminOnlyFieldAccess } from '@/access/adminOnlyFieldAccess'
 import { customerOnlyFieldAccess } from '@/access/customerOnlyFieldAccess'
 import { isAdmin } from '@/access/isAdmin'
 import { isDocumentOwner } from '@/access/isDocumentOwner'
+import { checkRole } from '@/access/utilities'
 
 const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Ecommerce Template` : 'Payload Ecommerce Template'
@@ -90,6 +91,27 @@ export const plugins: Plugin[] = [
     orders: {
       ordersCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        access: {
+          ...defaultCollection.access,
+          read: ({ req: { user } }) => {
+            if (!user) return false
+            if (checkRole(['admin'], user)) return true
+            if (checkRole(['vendor'], user)) {
+              const vendorWhere: Where = {
+                'items.product.vendor.owner': {
+                  equals: user.id,
+                },
+              }
+              return vendorWhere
+            }
+            const customerWhere: Where = {
+              customer: {
+                equals: user.id,
+              },
+            }
+            return customerWhere
+          },
+        },
         fields: [
           ...defaultCollection.fields,
           {

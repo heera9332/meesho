@@ -26,6 +26,7 @@ const collections: CollectionSlug[] = [
   'transactions',
   'addresses',
   'orders',
+  'vendors',
 ]
 
 const sizeVariantOptions = [
@@ -116,7 +117,7 @@ export const seed = async ({
     depth: 0,
     where: {
       email: {
-        equals: 'customer@example.com',
+        in: ['customer@example.com', 'vendor@example.com'],
       },
     },
   })
@@ -232,34 +233,96 @@ export const seed = async ({
     }),
   )
 
-  payload.logger.info(`— Seeding products...`)
+  payload.logger.info(`— Seeding products & marketplace vendors...`)
+
+  const vendorUser = await payload.create({
+    collection: 'users',
+    data: {
+      name: 'Priya Sharma (Vendor)',
+      email: 'vendor@example.com',
+      password: 'password',
+      roles: ['vendor'],
+    },
+  })
+
+  const kashmiriVendor = await payload.create({
+    collection: 'vendors',
+    data: {
+      name: 'Kashmiri Crafts & Weaves',
+      slug: 'kashmiri-crafts',
+      owner: vendorUser.id,
+      status: 'active',
+      isVerified: true,
+      commissionRate: 5,
+      description:
+        'Authentic handcrafted pashmina shawls, ethnic stoles, and traditional artisanal apparel from the valley of Kashmir.',
+      contactEmail: 'kashmiri.crafts@example.com',
+      contactPhone: '+91 98765 43210',
+      address: {
+        street: '14 Silk Route Emporium, Lal Chowk',
+        city: 'Srinagar',
+        state: 'Jammu & Kashmir',
+        postalCode: '190001',
+        country: 'India',
+      },
+    },
+  })
+
+  const delhiEthnicVendor = await payload.create({
+    collection: 'vendors',
+    data: {
+      name: 'Delhi Ethnic Hub',
+      slug: 'delhi-ethnic-hub',
+      owner: vendorUser.id,
+      status: 'active',
+      isVerified: true,
+      commissionRate: 5,
+      description:
+        'Trendy daily wear kurtis, pure cotton t-shirts, and contemporary Indian ethnic wear direct from manufacturer.',
+      contactEmail: 'delhi.ethnic@example.com',
+      contactPhone: '+91 91234 56789',
+      address: {
+        street: 'Plot 45, Textile Hub, Chandni Chowk',
+        city: 'New Delhi',
+        state: 'Delhi',
+        postalCode: '110006',
+        country: 'India',
+      },
+    },
+  })
 
   const productHat = await payload.create({
     collection: 'products',
     depth: 0,
-    data: productHatData({
-      galleryImage: imageHat,
-      metaImage: imageHat,
-      variantTypes: [colorVariantType],
-      categories: [hatsCategory],
-      relatedProducts: [],
-    }),
+    data: {
+      ...productHatData({
+        galleryImage: imageHat,
+        metaImage: imageHat,
+        variantTypes: [colorVariantType],
+        categories: [hatsCategory],
+        relatedProducts: [],
+      }),
+      vendor: kashmiriVendor.id,
+    },
   })
 
   const productTshirt = await payload.create({
     collection: 'products',
     depth: 0,
-    data: productTshirtData({
-      galleryImages: [
-        { image: imageTshirtBlack, variantOption: black },
-        { image: imageTshirtWhite, variantOption: white },
-      ],
-      metaImage: imageTshirtBlack,
-      contentImage: imageHero,
-      variantTypes: [colorVariantType, sizeVariantType],
-      categories: [tshirtsCategory],
-      relatedProducts: [productHat],
-    }),
+    data: {
+      ...productTshirtData({
+        galleryImages: [
+          { image: imageTshirtBlack, variantOption: black },
+          { image: imageTshirtWhite, variantOption: white },
+        ],
+        metaImage: imageTshirtBlack,
+        contentImage: imageHero,
+        variantTypes: [colorVariantType, sizeVariantType],
+        categories: [tshirtsCategory],
+        relatedProducts: [productHat],
+      }),
+      vendor: delhiEthnicVendor.id,
+    },
   })
 
   let hoodieID: number | string = productTshirt.id

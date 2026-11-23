@@ -76,6 +76,7 @@ export interface Config {
     pages: Page;
     categories: Category;
     media: Media;
+    vendors: Vendor;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -93,12 +94,16 @@ export interface Config {
   };
   collectionsJoins: {
     users: {
+      vendorStore: 'vendors';
       orders: 'orders';
       cart: 'carts';
       addresses: 'addresses';
     };
     categories: {
       subcategories: 'categories';
+      products: 'products';
+    };
+    vendors: {
       products: 'products';
     };
     variantTypes: {
@@ -113,6 +118,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    vendors: VendorsSelect<false> | VendorsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -191,7 +197,15 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
-  roles?: ('admin' | 'customer')[] | null;
+  roles?: ('admin' | 'vendor' | 'customer')[] | null;
+  /**
+   * Vendor marketplace store associated with this user account.
+   */
+  vendorStore?: {
+    docs?: (number | Vendor)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   orders?: {
     docs?: (number | Order)[];
     hasNextPage?: boolean;
@@ -229,40 +243,102 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "orders".
+ * via the `definition` "vendors".
  */
-export interface Order {
+export interface Vendor {
   id: number;
-  items?:
-    | {
-        product?: (number | null) | Product;
-        variant?: (number | null) | Variant;
-        quantity: number;
-        id?: string | null;
-      }[]
-    | null;
-  shippingAddress?: {
-    title?: string | null;
-    firstName?: string | null;
-    lastName?: string | null;
-    company?: string | null;
-    addressLine1?: string | null;
-    addressLine2?: string | null;
+  name: string;
+  /**
+   * The user account authorized to manage this store and its products.
+   */
+  owner: number | User;
+  status?: ('active' | 'pending' | 'suspended') | null;
+  /**
+   * Highlights this vendor with a verified trust badge on storefront product cards.
+   */
+  isVerified?: boolean | null;
+  /**
+   * Percentage fee retained by platform on each sale.
+   */
+  commissionRate?: number | null;
+  rating?: number | null;
+  reviewsCount?: number | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Public description displayed on the vendor profile and store page.
+   */
+  description?: string | null;
+  logo?: (number | null) | Media;
+  banner?: (number | null) | Media;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  address?: {
+    street?: string | null;
     city?: string | null;
     state?: string | null;
     postalCode?: string | null;
     country?: string | null;
-    phone?: string | null;
   };
-  customer?: (number | null) | User;
-  customerEmail?: string | null;
-  transactions?: (number | Transaction)[] | null;
-  status?: OrderStatus;
-  amount?: number | null;
-  currency?: 'USD' | null;
-  accessToken?: string | null;
+  businessDetails?: {
+    legalBusinessName?: string | null;
+    gstin?: string | null;
+    pan?: string | null;
+  };
+  payoutDetails?: {
+    accountHolder?: string | null;
+    bankName?: string | null;
+    accountNumber?: string | null;
+    ifscCode?: string | null;
+    upiId?: string | null;
+  };
+  /**
+   * Products created by and assigned to this vendor store.
+   */
+  products?: {
+    docs?: (number | Product)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -315,6 +391,10 @@ export interface Product {
   };
   categories?: (number | Category)[] | null;
   /**
+   * The vendor store offering this product.
+   */
+  vendor?: (number | null) | Vendor;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
@@ -323,40 +403,6 @@ export interface Product {
   createdAt: string;
   deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  caption?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -950,6 +996,43 @@ export interface Variant {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  items?:
+    | {
+        product?: (number | null) | Product;
+        variant?: (number | null) | Variant;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  shippingAddress?: {
+    title?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    company?: string | null;
+    addressLine1?: string | null;
+    addressLine2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+    phone?: string | null;
+  };
+  customer?: (number | null) | User;
+  customerEmail?: string | null;
+  transactions?: (number | Transaction)[] | null;
+  status?: OrderStatus;
+  amount?: number | null;
+  currency?: 'USD' | null;
+  accessToken?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "transactions".
  */
 export interface Transaction {
@@ -1132,6 +1215,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'vendors';
+        value: number | Vendor;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: number | Form;
       } | null)
@@ -1220,6 +1307,7 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
+  vendorStore?: T;
   orders?: T;
   cart?: T;
   addresses?: T;
@@ -1451,6 +1539,54 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vendors_select".
+ */
+export interface VendorsSelect<T extends boolean = true> {
+  name?: T;
+  owner?: T;
+  status?: T;
+  isVerified?: T;
+  commissionRate?: T;
+  rating?: T;
+  reviewsCount?: T;
+  generateSlug?: T;
+  slug?: T;
+  description?: T;
+  logo?: T;
+  banner?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  address?:
+    | T
+    | {
+        street?: T;
+        city?: T;
+        state?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  businessDetails?:
+    | T
+    | {
+        legalBusinessName?: T;
+        gstin?: T;
+        pan?: T;
+      };
+  payoutDetails?:
+    | T
+    | {
+        accountHolder?: T;
+        bankName?: T;
+        accountNumber?: T;
+        ifscCode?: T;
+        upiId?: T;
+      };
+  products?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1698,6 +1834,7 @@ export interface ProductsSelect<T extends boolean = true> {
         description?: T;
       };
   categories?: T;
+  vendor?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;

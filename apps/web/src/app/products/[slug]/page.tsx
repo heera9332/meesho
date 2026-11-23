@@ -1,7 +1,7 @@
-import { getProductBySlug, getProducts, getProductImages, getProductPrice, getProductCategory } from "@/lib/payload"
+import { getProductBySlug, getProducts, getProductImages, getProductPrice, getProductCategory, getProductVendor } from "@/lib/payload"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { Star, ShieldCheck, Truck, RefreshCw } from "lucide-react"
+import { Star, ShieldCheck, Truck, RefreshCw, Store, BadgeCheck } from "lucide-react"
 import { ProductCard } from "@/components/product-card"
 import { AddToCartDetail } from "./add-to-cart-detail"
 
@@ -21,6 +21,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const images = getProductImages(product)
   const price = getProductPrice(product)
   const categoryTitle = getProductCategory(product)
+  const vendor = getProductVendor(product)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
@@ -91,6 +92,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
           {/* Add to Cart Component */}
           <AddToCartDetail product={product} />
+
+          {/* Multi-Vendor Seller Information */}
+          {vendor && (
+            <div className="flex items-center justify-between p-3.5 rounded-xl border bg-secondary/30">
+              <div className="flex items-center gap-2.5">
+                <Store className="h-5 w-5 text-pink-600 shrink-0" />
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-foreground">{vendor.name}</span>
+                    {vendor.isVerified && <BadgeCheck className="h-3.5 w-3.5 text-pink-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">Marketplace Verified Seller</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Trust Guarantees */}
           <div className="grid grid-cols-3 gap-2 border-t pt-6 text-center">

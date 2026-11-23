@@ -11,7 +11,7 @@ import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: ({ req: { user } }) => checkRole(['admin'], user),
+    admin: ({ req: { user } }) => checkRole(['admin', 'vendor'], user),
     create: publicAccess,
     delete: adminOnly,
     read: adminOrSelf,
@@ -50,10 +50,25 @@ export const Users: CollectionConfig = {
           value: 'admin',
         },
         {
+          label: 'vendor',
+          value: 'vendor',
+        },
+        {
           label: 'customer',
           value: 'customer',
         },
       ],
+    },
+    {
+      name: 'vendorStore',
+      type: 'join',
+      collection: 'vendors',
+      on: 'owner',
+      admin: {
+        allowCreate: false,
+        defaultColumns: ['name', 'slug', 'status', 'isVerified'],
+        description: 'Vendor marketplace store associated with this user account.',
+      },
     },
     {
       name: 'orders',

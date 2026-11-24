@@ -370,6 +370,7 @@ export async function getProducts(categorySlug?: string, locale: string = "en"):
     const res = await fetch(url.toString(), {
       next: { revalidate: 60 },
       headers: { "Content-Type": "application/json" },
+      signal: AbortSignal.timeout(3000),
     })
 
     if (res.ok) {
@@ -394,6 +395,7 @@ export async function getProductBySlug(slug: string, locale: string = "en"): Pro
   try {
     const res = await fetch(`${PAYLOAD_URL}/api/products?where[slug][equals]=${slug}&locale=${locale}`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(3000),
     })
     if (res.ok) {
       const data = await res.json()
@@ -412,6 +414,7 @@ export async function getCategories(locale: string = "en"): Promise<Category[]> 
   try {
     const res = await fetch(`${PAYLOAD_URL}/api/categories?sort=menuOrder&locale=${locale}`, {
       next: { revalidate: 300 },
+      signal: AbortSignal.timeout(3000),
     })
     if (res.ok) {
       const data = await res.json()

@@ -16,6 +16,8 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from '@/collections/Categories'
+import { EmailQueue } from '@/collections/EmailQueue'
+import { EmailTemplates } from '@/collections/EmailTemplates'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { Posts } from '@/collections/Posts'
@@ -23,6 +25,7 @@ import { Users } from '@/collections/Users'
 import { Vendors } from '@/collections/Vendors'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
+import { seedEmailTemplates, enqueueEmail } from '@/utilities/email/queue'
 import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -49,11 +52,12 @@ export default buildConfig({
     },
     user: Users.slug,
   },
-  collections: [Users, Pages, Posts, Categories, Media, Vendors],
+  collections: [Users, Pages, Posts, Categories, Media, Vendors, EmailTemplates, EmailQueue],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    push: false,
   }),
   editor: lexicalEditor({
     features: () => {
@@ -156,7 +160,46 @@ export default buildConfig({
         }
       },
     },
+    {
+      path: '/send-template-email',
+      method: 'post',
+      handler: async (req) => {
+        if (!req.user) {
+          return Response.json(
+            { error: 'Unauthorized: Admin authentication required' },
+            { status: 401 }
+          )
+        }
+        try {
+          const body = (await req.json?.()) || {}
+          const { to, templateSlug = 'order-confirmation', data = {}, locale = 'en' } = body
+
+          if (!to) {
+            return Response.json({ error: 'Recipient "to" email address is required' }, { status: 400 })
+          }
+
+          const result = await enqueueEmail({
+            to,
+            templateSlug,
+            data,
+            locale,
+          })
+
+          return Response.json({
+            success: true,
+            fireAndForget: true,
+            message: 'Email enqueued for background asynchronous dispatch.',
+            ...result,
+          })
+        } catch (err: any) {
+          return Response.json({ error: err.message || 'Failed to enqueue email' }, { status: 500 })
+        }
+      },
+    },
   ],
+  onInit: async (payload) => {
+    await seedEmailTemplates(payload)
+  },
   globals: [Header, Footer],
   localization: {
     locales: [

@@ -3,6 +3,7 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { getServerSideURL } from '@/utilities/getURL'
+import { enqueueEmail } from '@/utilities/email/queue'
 
 type SendOrderAccessEmailArgs = {
   email: string
@@ -39,21 +40,15 @@ export async function sendOrderAccessEmail({
     const serverURL = getServerSideURL()
     const orderURL = `${serverURL}/orders/${order.id}?email=${encodeURIComponent(email)}&accessToken=${order.accessToken}`
 
-    const emailBody = `
-        <h1>View Your Order</h1>
-        <p>Click the link below to view your order details:</p>
-        <p><a href="${orderURL}">View Order #${order.id}</a></p>
-        <p>Or copy and paste this URL into your browser:</p>
-        <p>${orderURL}</p>
-        <p>This link will give you access to view your order details.</p>
-      `
-
-    console.log('[sendOrderAccessEmail] Email body:', emailBody)
-
-    await payload.sendEmail({
+    // Asynchronous fire-and-forget email dispatch
+    await enqueueEmail({
       to: email,
-      subject: `Access your order #${order.id}`,
-      html: emailBody,
+      templateSlug: 'order-access',
+      data: {
+        orderId: String(order.id),
+        orderUrl: orderURL,
+        customerEmail: email,
+      },
     })
 
     return { success: true }

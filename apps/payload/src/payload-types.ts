@@ -78,6 +78,8 @@ export interface Config {
     categories: Category;
     media: Media;
     vendors: Vendor;
+    'email-templates': EmailTemplate;
+    'email-queue': EmailQueue;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -121,6 +123,8 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     vendors: VendorsSelect<false> | VendorsSelect<true>;
+    'email-templates': EmailTemplatesSelect<false> | EmailTemplatesSelect<true>;
+    'email-queue': EmailQueueSelect<false> | EmailQueueSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -1336,6 +1340,83 @@ export interface Cart {
   createdAt: string;
 }
 /**
+ * Manage multi-lingual email templates (English & Hindi) with dynamic {{placeholder}} variables.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-templates".
+ */
+export interface EmailTemplate {
+  id: number;
+  /**
+   * Human-readable name for this email template (e.g. Order Confirmation)
+   */
+  name: string;
+  /**
+   * Unique programmatic key used when queueing emails (e.g. order-confirmation, forgot-password, order-access, welcome)
+   */
+  slug: string;
+  /**
+   * Explains when and where this email is automatically triggered
+   */
+  description?: string | null;
+  /**
+   * List of variables available to insert into this template (e.g. {{customerName}}, {{orderId}}, {{orderUrl}}, {{orderTotal}})
+   */
+  supportedPlaceholders?: string | null;
+  /**
+   * Subject line of the email. Supports placeholder variables like {{orderId}}, {{companyName}}, etc.
+   */
+  subject: string;
+  /**
+   * Full HTML template body with inline CSS styling. Placeholders like {{customerName}} will be substituted at dispatch.
+   */
+  content: string;
+  /**
+   * When disabled, emails attempting to use this template will be skipped.
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Asynchronous background email queue and audit logs for fire-and-forget email dispatch.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-queue".
+ */
+export interface EmailQueue {
+  id: number;
+  to: string;
+  subject: string;
+  /**
+   * Slug of the EmailTemplate used, if any
+   */
+  templateSlug?: string | null;
+  locale?: ('en' | 'hi') | null;
+  status?: ('pending' | 'processing' | 'sent' | 'failed') | null;
+  attempts?: number | null;
+  sentAt?: string | null;
+  lastError?: string | null;
+  /**
+   * JSON payload passed to the template at queue time
+   */
+  variables?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Final compiled HTML body sent to the SMTP server
+   */
+  renderedHtml?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
@@ -1399,6 +1480,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'vendors';
         value: number | Vendor;
+      } | null)
+    | ({
+        relationTo: 'email-templates';
+        value: number | EmailTemplate;
+      } | null)
+    | ({
+        relationTo: 'email-queue';
+        value: number | EmailQueue;
       } | null)
     | ({
         relationTo: 'forms';
@@ -1884,6 +1973,39 @@ export interface VendorsSelect<T extends boolean = true> {
         upiId?: T;
       };
   products?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-templates_select".
+ */
+export interface EmailTemplatesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  supportedPlaceholders?: T;
+  subject?: T;
+  content?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-queue_select".
+ */
+export interface EmailQueueSelect<T extends boolean = true> {
+  to?: T;
+  subject?: T;
+  templateSlug?: T;
+  locale?: T;
+  status?: T;
+  attempts?: T;
+  sentAt?: T;
+  lastError?: T;
+  variables?: T;
+  renderedHtml?: T;
   updatedAt?: T;
   createdAt?: T;
 }

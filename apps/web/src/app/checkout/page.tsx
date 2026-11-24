@@ -1,13 +1,15 @@
 "use client"
 
 import { useCart } from "@/lib/cart-context"
-import { getProductImage, getProductPrice } from "@/lib/payload"
+import { useLocale } from "@/lib/locale-context"
+import { getProductImage, getProductPrice, getLocalizedTitle } from "@/lib/payload"
 import { useState } from "react"
 import Link from "next/link"
 import { CheckCircle2, ShieldCheck, Truck, ArrowLeft, CreditCard, Banknote } from "lucide-react"
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
+  const { locale, t } = useLocale()
   const [isSuccess, setIsSuccess] = useState(false)
   const [formData, setFormData] = useState({
     fullName: "Aarav Sharma",
@@ -36,24 +38,24 @@ export default function CheckoutPage() {
           <CheckCircle2 className="h-10 w-10" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Order Placed Successfully!</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t.checkout.successTitle}</h1>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
-            Thank you for ordering with Meesho. Your order ID is <span className="font-semibold text-foreground">#MSH-94821</span>. We will notify you once shipped!
+            {t.checkout.successMessage}
           </p>
         </div>
 
         <div className="p-4 rounded-xl border bg-card text-left max-w-sm mx-auto space-y-2 text-xs">
-          <p className="font-semibold text-foreground">Shipping To:</p>
+          <p className="font-semibold text-foreground">{t.checkout.shippingTo}</p>
           <p className="text-muted-foreground">{formData.fullName}</p>
           <p className="text-muted-foreground">{formData.address}, {formData.city}, {formData.state} - {formData.postalCode}</p>
-          <p className="text-muted-foreground">Phone: {formData.phone}</p>
+          <p className="text-muted-foreground">{t.checkout.phoneLabel} {formData.phone}</p>
         </div>
 
         <Link
           href="/products"
           className="inline-block rounded-xl bg-pink-600 px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-md hover:bg-pink-700 transition-all"
         >
-          Continue Shopping
+          {t.cart.continueShopping}
         </Link>
       </div>
     )
@@ -62,10 +64,14 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center space-y-4">
-        <h2 className="text-xl font-bold">No Items to Checkout</h2>
-        <p className="text-xs text-muted-foreground">Please add items to your cart before proceeding to checkout.</p>
+        <h2 className="text-xl font-bold">
+          {locale === "hi" ? "चेकआउट के लिए कोई आइटम नहीं" : "No Items to Checkout"}
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          {locale === "hi" ? "कृपया चेकआउट करने से पहले अपनी कार्ट में आइटम जोड़ें।" : "Please add items to your cart before proceeding to checkout."}
+        </p>
         <Link href="/products" className="text-xs font-semibold text-pink-600 hover:underline">
-          Browse Catalog
+          {t.products.viewAllProducts}
         </Link>
       </div>
     )
@@ -76,9 +82,9 @@ export default function CheckoutPage() {
       <div>
         <Link href="/cart" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-3">
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to Cart</span>
+          <span>{locale === "hi" ? "कार्ट पर वापस जाएं" : "Back to Cart"}</span>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Secure Checkout</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t.checkout.title}</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -88,12 +94,12 @@ export default function CheckoutPage() {
           <div className="p-6 rounded-2xl border bg-card shadow-xs space-y-4">
             <h3 className="font-bold text-base border-b pb-3 flex items-center gap-2">
               <Truck className="h-4 w-4 text-pink-600" />
-              <span>1. Delivery Address</span>
+              <span>1. {t.checkout.shippingAddress}</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="font-medium text-foreground block mb-1">Full Name</label>
+                <label className="font-medium text-foreground block mb-1">{t.checkout.fullName}</label>
                 <input
                   type="text"
                   name="fullName"
@@ -104,7 +110,7 @@ export default function CheckoutPage() {
                 />
               </div>
               <div>
-                <label className="font-medium text-foreground block mb-1">Phone Number</label>
+                <label className="font-medium text-foreground block mb-1">{t.checkout.phone}</label>
                 <input
                   type="tel"
                   name="phone"
@@ -115,7 +121,7 @@ export default function CheckoutPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="font-medium text-foreground block mb-1">Street Address</label>
+                <label className="font-medium text-foreground block mb-1">{t.checkout.address}</label>
                 <input
                   type="text"
                   name="address"
@@ -126,7 +132,7 @@ export default function CheckoutPage() {
                 />
               </div>
               <div>
-                <label className="font-medium text-foreground block mb-1">City</label>
+                <label className="font-medium text-foreground block mb-1">{t.checkout.city}</label>
                 <input
                   type="text"
                   name="city"
@@ -137,7 +143,7 @@ export default function CheckoutPage() {
                 />
               </div>
               <div>
-                <label className="font-medium text-foreground block mb-1">Pincode</label>
+                <label className="font-medium text-foreground block mb-1">{t.checkout.postalCode}</label>
                 <input
                   type="text"
                   name="postalCode"
@@ -154,7 +160,7 @@ export default function CheckoutPage() {
           <div className="p-6 rounded-2xl border bg-card shadow-xs space-y-4">
             <h3 className="font-bold text-base border-b pb-3 flex items-center gap-2">
               <CreditCard className="h-4 w-4 text-pink-600" />
-              <span>2. Payment Option</span>
+              <span>2. {t.checkout.paymentMethod}</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -176,8 +182,8 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-2">
                   <Banknote className="h-4 w-4 text-emerald-600" />
                   <div>
-                    <span className="font-semibold block text-foreground">Cash on Delivery</span>
-                    <span className="text-[11px] text-muted-foreground">Pay when delivered</span>
+                    <span className="font-semibold block text-foreground">{t.checkout.cashOnDelivery}</span>
+                    <span className="text-[11px] text-muted-foreground">{locale === "hi" ? "डिलीवरी पर भुगतान करें" : "Pay when delivered"}</span>
                   </div>
                 </div>
               </label>
@@ -200,8 +206,8 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-pink-600" />
                   <div>
-                    <span className="font-semibold block text-foreground">UPI / Card / NetBanking</span>
-                    <span className="text-[11px] text-muted-foreground">Instant payment</span>
+                    <span className="font-semibold block text-foreground">{t.checkout.upiOnline}</span>
+                    <span className="text-[11px] text-muted-foreground">{locale === "hi" ? "त्वरित सुरक्षित भुगतान" : "Instant payment"}</span>
                   </div>
                 </div>
               </label>
@@ -212,19 +218,22 @@ export default function CheckoutPage() {
             type="submit"
             className="w-full rounded-xl bg-pink-600 py-3.5 text-xs sm:text-sm font-semibold text-white shadow-md shadow-pink-600/20 hover:bg-pink-700 active:scale-98 transition-all"
           >
-            Place Order • ₹{subtotal}
+            {t.checkout.placeOrder} • ₹{subtotal}
           </button>
         </form>
 
         {/* Order Summary Checkout Card */}
         <div className="lg:col-span-4">
           <div className="p-6 rounded-2xl border bg-card shadow-md space-y-4 sticky top-24">
-            <h3 className="font-bold text-base border-b pb-3">Order Summary ({items.length} items)</h3>
+            <h3 className="font-bold text-base border-b pb-3">
+              {t.checkout.orderSummary} ({items.length})
+            </h3>
 
             <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
               {items.map((item) => {
                 const price = getProductPrice(item.product)
                 const imageUrl = getProductImage(item.product)
+                const title = getLocalizedTitle(item.product, locale)
 
                 return (
                   <div key={item.product.id} className="flex items-center justify-between gap-3 text-xs">
@@ -235,8 +244,8 @@ export default function CheckoutPage() {
                         className="h-10 w-10 rounded-md object-cover bg-secondary"
                       />
                       <div>
-                        <p className="font-medium line-clamp-1 max-w-[180px]">{item.product.title}</p>
-                        <p className="text-muted-foreground">Qty: {item.quantity}</p>
+                        <p className="font-medium line-clamp-1 max-w-[180px]">{title}</p>
+                        <p className="text-muted-foreground">{locale === "hi" ? "मात्रा" : "Qty"}: {item.quantity}</p>
                       </div>
                     </div>
                     <span className="font-bold">₹{price * item.quantity}</span>
@@ -247,22 +256,22 @@ export default function CheckoutPage() {
 
             <div className="border-t pt-3 space-y-1.5 text-xs">
               <div className="flex justify-between text-muted-foreground">
-                <span>Subtotal</span>
+                <span>{t.cart.subtotal}</span>
                 <span>₹{subtotal}</span>
               </div>
               <div className="flex justify-between text-emerald-600 font-medium">
-                <span>Shipping</span>
-                <span>FREE</span>
+                <span>{t.cart.freeDelivery}</span>
+                <span>{t.cart.free}</span>
               </div>
               <div className="flex justify-between text-base font-bold text-foreground border-t pt-2">
-                <span>Total Payable</span>
+                <span>{t.cart.total}</span>
                 <span>₹{subtotal}</span>
               </div>
             </div>
 
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground pt-2">
               <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>100% Payment Security & Guaranteed Delivery</span>
+              <span>{t.trust.securePayments}</span>
             </div>
           </div>
         </div>

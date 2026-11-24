@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { CartProvider } from "@/lib/cart-context"
+import { LocaleProvider } from "@/lib/locale-context"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { CartSheet } from "@/components/cart-sheet"
@@ -18,12 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col antialiased">
-        <CartProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CartSheet />
-        </CartProvider>
+        <LocaleProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartSheet />
+          </CartProvider>
+        </LocaleProvider>
       </body>
     </html>
   )

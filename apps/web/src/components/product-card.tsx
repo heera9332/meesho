@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { Product } from "@/types/ecommerce"
 import { useCart } from "@/lib/cart-context"
-import { getProductImage, getProductPrice, getProductVendor } from "@/lib/payload"
+import { useLocale } from "@/lib/locale-context"
+import { getProductImage, getProductPrice, getProductVendor, getLocalizedTitle } from "@/lib/payload"
 import { Star, ShoppingBag, Check, BadgeCheck } from "lucide-react"
 import { useState } from "react"
 
@@ -13,6 +14,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart()
+  const { locale, t } = useLocale()
   const [isAdded, setIsAdded] = useState(false)
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -26,6 +28,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const price = getProductPrice(product)
   const imageUrl = getProductImage(product)
   const vendor = getProductVendor(product)
+  const displayTitle = getLocalizedTitle(product, locale)
 
   return (
     <div className="group relative flex flex-col rounded-xl border bg-card overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200">
@@ -33,7 +36,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link href={`/products/${product.slug}`} className="relative aspect-square w-full overflow-hidden bg-secondary/30">
         <img
           src={imageUrl}
-          alt={product.title}
+          alt={displayTitle}
           className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
@@ -44,7 +47,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div>
           <Link href={`/products/${product.slug}`}>
             <h3 className="font-medium text-sm text-foreground line-clamp-2 group-hover:text-pink-600 transition-colors">
-              {product.title}
+              {displayTitle}
             </h3>
           </Link>
 
@@ -73,7 +76,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <div className="flex items-baseline gap-1.5">
               <span className="text-base font-bold text-foreground">₹{price}</span>
             </div>
-            <span className="text-[10px] text-emerald-600 font-semibold">Free Delivery</span>
+            <span className="text-[10px] text-emerald-600 font-semibold">{t.products.freeDeliveryBadge}</span>
           </div>
 
           <button
@@ -83,8 +86,8 @@ export function ProductCard({ product }: ProductCardProps) {
                 ? "bg-emerald-600 text-white"
                 : "bg-pink-600 text-white hover:bg-pink-700 active:scale-95 shadow-xs"
             }`}
-            title="Add to cart"
-            aria-label="Add to cart"
+            title={isAdded ? t.products.addedToCart : t.products.addToCart}
+            aria-label={isAdded ? t.products.addedToCart : t.products.addToCart}
           >
             {isAdded ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
           </button>

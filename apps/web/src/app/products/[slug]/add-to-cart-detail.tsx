@@ -2,12 +2,14 @@
 
 import { Product } from "@/types/ecommerce"
 import { useCart } from "@/lib/cart-context"
+import { useLocale } from "@/lib/locale-context"
 import { ShoppingBag, Zap, Check } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
 export function AddToCartDetail({ product }: { product: Product }) {
   const { addItem, setIsSheetOpen } = useCart()
+  const { locale, t } = useLocale()
   const router = useRouter()
   const [selectedSize, setSelectedSize] = useState("M")
   const [isAdded, setIsAdded] = useState(false)
@@ -29,7 +31,9 @@ export function AddToCartDetail({ product }: { product: Product }) {
     <div className="space-y-4">
       {/* Select Size */}
       <div>
-        <label className="text-xs font-semibold text-foreground block mb-2">Select Size</label>
+        <label className="text-xs font-semibold text-foreground block mb-2">
+          {locale === "hi" ? "साइज़ चुनें" : "Select Size"}
+        </label>
         <div className="flex gap-2">
           {SIZES.map((size) => (
             <button
@@ -60,12 +64,12 @@ export function AddToCartDetail({ product }: { product: Product }) {
           {isAdded ? (
             <>
               <Check className="h-4 w-4" />
-              <span>Added to Cart!</span>
+              <span>{t.products.addedToCart}</span>
             </>
           ) : (
             <>
               <ShoppingBag className="h-4 w-4" />
-              <span>Add to Cart</span>
+              <span>{t.products.addToCart}</span>
             </>
           )}
         </button>
@@ -75,7 +79,7 @@ export function AddToCartDetail({ product }: { product: Product }) {
           className="flex items-center justify-center gap-2 rounded-xl bg-pink-600 py-3 px-4 text-xs sm:text-sm font-semibold text-white shadow-md shadow-pink-600/20 hover:bg-pink-700 active:scale-98 transition-all"
         >
           <Zap className="h-4 w-4" />
-          <span>Buy Now</span>
+          <span>{locale === "hi" ? "अभी खरीदें" : "Buy Now"}</span>
         </button>
       </div>
     </div>

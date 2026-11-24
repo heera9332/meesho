@@ -28,11 +28,13 @@ export const Categories: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Category Name',
+      localized: true,
     },
     {
       name: 'description',
       type: 'richText',
       label: 'Category Description',
+      localized: true,
       editor: lexicalEditor({
         features: ({ rootFeatures }) => [
           ...rootFeatures,

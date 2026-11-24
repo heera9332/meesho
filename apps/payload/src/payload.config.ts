@@ -83,6 +83,20 @@ export default buildConfig({
   //email: nodemailerAdapter(),
   endpoints: [],
   globals: [Header, Footer],
+  localization: {
+    locales: [
+      {
+        label: 'English',
+        code: 'en',
+      },
+      {
+        label: 'हिन्दी (Hindi)',
+        code: 'hi',
+      },
+    ],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   plugins,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

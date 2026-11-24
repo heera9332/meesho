@@ -1,7 +1,12 @@
+"use client"
+
 import Link from "next/link"
 import { Heart, Package, Shield, Truck } from "lucide-react"
+import { useLocale } from "@/lib/locale-context"
 
 export function Footer() {
+  const { t } = useLocale()
+
   return (
     <footer className="border-t bg-secondary/30 mt-20">
       {/* Guarantees Bar */}
@@ -13,8 +18,8 @@ export function Footer() {
                 <Truck className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">Free Delivery</h4>
-                <p className="text-xs text-muted-foreground">On all orders pan-India</p>
+                <h4 className="text-sm font-semibold">{t.trust.freeDelivery}</h4>
+                <p className="text-xs text-muted-foreground">{t.trust.freeDeliverySub}</p>
               </div>
             </div>
 
@@ -23,8 +28,8 @@ export function Footer() {
                 <Shield className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">Safe & Secure Payments</h4>
-                <p className="text-xs text-muted-foreground">100% Payment Protection</p>
+                <h4 className="text-sm font-semibold">{t.trust.securePayments}</h4>
+                <p className="text-xs text-muted-foreground">{t.trust.securePaymentsSub}</p>
               </div>
             </div>
 
@@ -33,8 +38,8 @@ export function Footer() {
                 <Package className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">7 Days Easy Return</h4>
-                <p className="text-xs text-muted-foreground">Instant refund directly to bank</p>
+                <h4 className="text-sm font-semibold">{t.trust.returns}</h4>
+                <p className="text-xs text-muted-foreground">{t.trust.returnsSub}</p>
               </div>
             </div>
 
@@ -43,8 +48,8 @@ export function Footer() {
                 <Heart className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">Lowest Price Guarantee</h4>
-                <p className="text-xs text-muted-foreground">Direct from manufacturers</p>
+                <h4 className="text-sm font-semibold">{t.trust.priceGuarantee}</h4>
+                <p className="text-xs text-muted-foreground">{t.trust.priceGuaranteeSub}</p>
               </div>
             </div>
           </div>
@@ -55,7 +60,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h5 className="font-semibold text-sm mb-4">Shop by Category</h5>
+            <h5 className="font-semibold text-sm mb-4">{t.footer.shopByCategory}</h5>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li><Link href="/products?category=womens-ethnic" className="hover:text-foreground">Women Ethnic</Link></li>
               <li><Link href="/products?category=mens-fashion" className="hover:text-foreground">Men's Apparel</Link></li>
@@ -66,12 +71,12 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="font-semibold text-sm mb-4">Customer Care</h5>
+            <h5 className="font-semibold text-sm mb-4">{t.footer.customerCare}</h5>
             <ul className="space-y-2 text-xs text-muted-foreground">
-              <li><Link href="/cart" className="hover:text-foreground">Track Order</Link></li>
-              <li><Link href="/checkout" className="hover:text-foreground">Shipping Policy</Link></li>
-              <li><a href="#" className="hover:text-foreground">Return & Refund</a></li>
-              <li><a href="#" className="hover:text-foreground">FAQ & Support</a></li>
+              <li><Link href="/cart" className="hover:text-foreground">{t.footer.trackOrder}</Link></li>
+              <li><Link href="/checkout" className="hover:text-foreground">{t.footer.shippingPolicy}</Link></li>
+              <li><a href="#" className="hover:text-foreground">{t.footer.returnsRefunds}</a></li>
+              <li><a href="#" className="hover:text-foreground">{t.footer.helpCenter}</a></li>
             </ul>
           </div>
 
@@ -86,16 +91,16 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="font-semibold text-sm mb-4">Architecture</h5>
+            <h5 className="font-semibold text-sm mb-4">{t.footer.aboutMeesho}</h5>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Powered by <strong>Bun 1.4</strong> + <strong>Turborepo</strong>. Latest <strong>Next.js App Router</strong> with <strong>Tailwind CSS</strong>, <strong>shadcn/ui</strong>, and <strong>Payload CMS 3.x</strong> with <strong>PostgreSQL</strong>.
+              {t.footer.trustNotice}
             </p>
           </div>
         </div>
 
         <div className="border-t mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-muted-foreground gap-4">
-          <p>© {new Date().getFullYear()} Meesho E-Commerce Monorepo. All rights reserved.</p>
-          <p>Built with Bun, Turborepo, Payload CMS, Next.js & PostgreSQL.</p>
+          <p>© {new Date().getFullYear()} {t.footer.copyright}</p>
+          <p>Powered by Bun, Turborepo, Payload CMS 3 & Next.js App Router.</p>
         </div>
       </div>
     </footer>

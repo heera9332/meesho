@@ -278,6 +278,36 @@ export const MOCK_PRODUCTS: Product[] = [
 ]
 
 // Central helper functions for UI rendering
+const HINDI_CATEGORY_TITLES: Record<string, string> = {
+  "womens-ethnic": "महिलाओं के एथनिक वस्त्र",
+  "mens-fashion": "पुरुषों के फैशन",
+  electronics: "इलेक्ट्रॉनिक्स और टेक",
+  "home-kitchen": "घर और रसोई",
+  "beauty-wellness": "सौंदर्य और स्वास्थ्य",
+}
+
+const HINDI_PRODUCT_TITLES: Record<string, string> = {
+  "handcrafted-anarkali-kurta-set": "दुपट्टे के साथ हस्तनिर्मित अनारकली कुर्ता सेट",
+  "premium-cotton-slim-fit-shirt": "प्रीमियम कॉटन स्लिम-फिट कैजुअल शर्ट",
+  "wireless-anc-headphones": "वायरलेस ANC ब्लूटूथ ओवर-ईयर हेडफ़ोन",
+  "ceramic-minimalist-table-lamp": "सिरेमिक मिनिमलिस्ट टेबल लैंप और प्लांटर",
+  "organic-ayurvedic-glow-serum": "ऑर्गेनिक आयुर्वेदिक ग्लो फेस सीरम (30ml)",
+  "classic-embroidered-pashmina-shawl": "क्लासिक कढ़ाईदार पश्मीना शॉल",
+}
+
+export function getLocalizedTitle(
+  item: { title: string; slug?: string | null },
+  locale: string = "en"
+): string {
+  if (locale === "hi" && item.slug && HINDI_PRODUCT_TITLES[item.slug]) {
+    return HINDI_PRODUCT_TITLES[item.slug]
+  }
+  if (locale === "hi" && item.slug && HINDI_CATEGORY_TITLES[item.slug]) {
+    return HINDI_CATEGORY_TITLES[item.slug]
+  }
+  return item.title
+}
+
 export function getProductImage(product: Product): string {
   const first = product.gallery?.[0]?.image
   if (first && typeof first === "object" && first.url) {
@@ -302,12 +332,15 @@ export function getProductPrice(product: Product): number {
   return 0
 }
 
-export function getProductCategory(product: Product): string {
+export function getProductCategory(product: Product, locale: string = "en"): string {
   const first = product.categories?.[0]
   if (first && typeof first === "object" && first.title) {
+    if (locale === "hi" && first.slug && HINDI_CATEGORY_TITLES[first.slug]) {
+      return HINDI_CATEGORY_TITLES[first.slug]
+    }
     return first.title
   }
-  return "General"
+  return locale === "hi" ? "सामान्य" : "General"
 }
 
 export function getCategoryImage(category: Category): string {
@@ -327,9 +360,10 @@ export function getProductVendor(product: Product): { name: string; isVerified: 
   return null
 }
 
-export async function getProducts(categorySlug?: string): Promise<Product[]> {
+export async function getProducts(categorySlug?: string, locale: string = "en"): Promise<Product[]> {
   try {
     const url = new URL(`${PAYLOAD_URL}/api/products`)
+    url.searchParams.append("locale", locale)
     if (categorySlug) {
       url.searchParams.append("where[categories.slug][equals]", categorySlug)
     }
@@ -356,9 +390,9 @@ export async function getProducts(categorySlug?: string): Promise<Product[]> {
   return MOCK_PRODUCTS
 }
 
-export async function getProductBySlug(slug: string): Promise<Product | null> {
+export async function getProductBySlug(slug: string, locale: string = "en"): Promise<Product | null> {
   try {
-    const res = await fetch(`${PAYLOAD_URL}/api/products?where[slug][equals]=${slug}`, {
+    const res = await fetch(`${PAYLOAD_URL}/api/products?where[slug][equals]=${slug}&locale=${locale}`, {
       next: { revalidate: 60 },
     })
     if (res.ok) {
@@ -374,9 +408,9 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   return MOCK_PRODUCTS.find((p) => p.slug === slug) || null
 }
 
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(locale: string = "en"): Promise<Category[]> {
   try {
-    const res = await fetch(`${PAYLOAD_URL}/api/categories?sort=menuOrder`, {
+    const res = await fetch(`${PAYLOAD_URL}/api/categories?sort=menuOrder&locale=${locale}`, {
       next: { revalidate: 300 },
     })
     if (res.ok) {

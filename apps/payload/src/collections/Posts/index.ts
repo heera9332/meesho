@@ -56,6 +56,7 @@ export const Posts: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       type: 'tabs',
@@ -73,6 +74,7 @@ export const Posts: CollectionConfig = {
               name: 'excerpt',
               type: 'textarea',
               label: 'Excerpt / Summary',
+              localized: true,
               admin: {
                 description: 'Short summary displayed in post listings and social sharing cards.',
               },
@@ -81,6 +83,7 @@ export const Posts: CollectionConfig = {
               name: 'content',
               type: 'richText',
               label: 'Article Body',
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => [
                   ...rootFeatures,
@@ -94,6 +97,7 @@ export const Posts: CollectionConfig = {
               name: 'layout',
               type: 'blocks',
               label: 'Additional Layout Blocks',
+              localized: true,
               blocks: [Content, MediaBlock, Banner, Code, CallToAction],
               admin: {
                 description: 'Optional modular sections for rich article layouts',

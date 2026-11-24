@@ -1,7 +1,12 @@
+"use client"
+
 import Link from "next/link"
 import { ArrowRight, Sparkles, TrendingUp, Zap } from "lucide-react"
+import { useLocale } from "@/lib/locale-context"
 
 export function Hero() {
+  const { t } = useLocale()
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-pink-50/60 via-background to-background py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,18 +15,18 @@ export function Hero() {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-pink-100/80 border border-pink-200 text-pink-700 text-xs font-semibold">
               <Sparkles className="h-3.5 w-3.5 text-pink-600" />
-              <span>Lowest Prices • Highest Quality</span>
+              <span>{t.hero.badge}</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
-              Smart Shopping, <br />
+              {t.hero.titleLine1} <br />
               <span className="bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 bg-clip-text text-transparent">
-                Unbeatable Deals.
+                {t.hero.titleLine2}
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed">
-              Discover millions of trendy ethnic wear, western fashion, electronics, and home essentials directly from verified manufacturers at wholesale rates.
+              {t.hero.description}
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -29,7 +34,7 @@ export function Hero() {
                 href="/products"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-pink-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-pink-600/25 hover:bg-pink-700 active:scale-[0.98] transition-all"
               >
-                <span>Explore Store</span>
+                <span>{t.hero.exploreStore}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
 
@@ -40,7 +45,7 @@ export function Hero() {
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-input bg-card px-5 py-3.5 text-sm font-medium hover:bg-secondary transition-all"
               >
                 <Zap className="h-4 w-4 text-pink-600" />
-                <span>Open Payload CMS</span>
+                <span>{t.hero.openCMS}</span>
               </a>
             </div>
 
@@ -48,15 +53,15 @@ export function Hero() {
             <div className="grid grid-cols-3 gap-4 pt-6 border-t max-w-md">
               <div>
                 <span className="block text-xl font-bold text-foreground">5M+</span>
-                <span className="text-xs text-muted-foreground">Happy Customers</span>
+                <span className="text-xs text-muted-foreground">{t.hero.stats.customers}</span>
               </div>
               <div>
                 <span className="block text-xl font-bold text-foreground">50k+</span>
-                <span className="text-xs text-muted-foreground">Unique Products</span>
+                <span className="text-xs text-muted-foreground">{t.hero.stats.products}</span>
               </div>
               <div>
                 <span className="block text-xl font-bold text-foreground">₹0</span>
-                <span className="text-xs text-muted-foreground">Delivery Charge</span>
+                <span className="text-xs text-muted-foreground">{t.hero.stats.delivery}</span>
               </div>
             </div>
           </div>
@@ -71,10 +76,10 @@ export function Hero() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                 <span className="inline-block px-2.5 py-1 rounded-md bg-pink-600 text-xs font-bold uppercase tracking-wider w-fit mb-2">
-                  Special Offer
+                  {t.hero.specialOffer}
                 </span>
-                <h3 className="text-xl font-bold">Festive Ethnic Collection</h3>
-                <p className="text-xs text-white/80 mt-1">Starting at just ₹499 with instant dispatch</p>
+                <h3 className="text-xl font-bold">{t.hero.festiveCollection}</h3>
+                <p className="text-xs text-white/80 mt-1">{t.hero.startingAt}</p>
               </div>
             </div>
 

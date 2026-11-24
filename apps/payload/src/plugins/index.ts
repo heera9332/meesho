@@ -17,11 +17,11 @@ import { isAdmin } from '@/access/isAdmin'
 import { isDocumentOwner } from '@/access/isDocumentOwner'
 import { checkRole } from '@/access/utilities'
 
-const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Ecommerce Template` : 'Payload Ecommerce Template'
+const generateTitle: GenerateTitle<any> = ({ doc }) => {
+  return doc?.title ? `${doc.title} | Meesho Marketplace` : 'Meesho Marketplace'
 }
 
-const generateURL: GenerateURL<Product | Page> = ({ doc }) => {
+const generateURL: GenerateURL<any> = ({ doc }) => {
   const url = getServerSideURL()
 
   return doc?.slug ? `${url}/${doc.slug}` : url

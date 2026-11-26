@@ -3,8 +3,8 @@
 import { useCart } from "@/lib/cart-context"
 import { useLocale } from "@/lib/locale-context"
 import { getProductImage, getProductPrice, getLocalizedTitle } from "@/lib/payload"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@repo/ui/components/sheet"
-import { ShoppingBag, X, Minus, Plus, Trash2, ArrowRight } from "lucide-react"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@repo/ui/components/sheet"
+import { ShoppingBag, Minus, Plus, Trash2, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export function CartSheet() {
@@ -16,19 +16,16 @@ export function CartSheet() {
       <SheetContent className="flex flex-col justify-between w-full sm:max-w-md p-6">
         {/* Header */}
         <div>
-          <SheetHeader className="flex flex-row items-center justify-between border-b pb-4 mb-4">
+          <SheetHeader className="flex flex-row items-center justify-between border-b pb-4 mb-4 pr-8">
             <div className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5 text-pink-600" />
               <SheetTitle className="text-base font-bold">
                 {t.cart.title} ({totalCount})
               </SheetTitle>
+              <SheetDescription className="sr-only">
+                {t.cart.title}
+              </SheetDescription>
             </div>
-            <button
-              onClick={() => setIsSheetOpen(false)}
-              className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
           </SheetHeader>
 
           {/* Cart Item List */}
